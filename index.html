@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -8,14 +8,121 @@
   <title>Vite App</title>
 
   <style>
-    body{
+    body {
       margin: 0;
+      -webkit-font-smoothing: antialiased
+    }
+
+    .absolute {
+      position: absolute;
+    }
+
+    .text-white {
+      color: white;
+    }
+
+    .text-center {
+      text-align: center;
+    }
+
+    .max-w-full {
+      max-width: 100%;
+    }
+
+    .w-full {
+      width: 100%;
+    }
+
+    .max-h-full {
+      max-height: 100%;
+    }
+
+    .h-full {
+      height: 100%;
+    }
+
+    .h-screen {
+      height: 100vh;
+    }
+
+    .font-exo {
+      font-family: 'Exo 2', sans-serif;
+    }
+
+    .font-mono {
+      font-family: 'Space Mono', monospace;
+    }
+
+    .text-sm {
+      font-size: 1rem;
+      line-height: 1.25rem;
+    }
+
+    .text-4xl {
+      font-size: 2.25rem;
+      line-height: 2.5rem;
+    }
+
+    .uppercase {
+      text-transform: uppercase;
+    }
+
+    .tracking-wide {
+      letter-spacing: 0.025em;
+    }
+
+    a {
+      transition-duration: 0.3s !important;
+    }
+
+    a:hover {
+      background-color: white !important;
+      color: gray !important;
     }
   </style>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@1,700&family=Space+Mono&display=swap"
+    rel="stylesheet">
+  <!-- <script src="https://cdn.tailwindcss.com"></script> -->
 </head>
 
 <body>
-  <div id="app"></div>
+  <div id="app">
+    <div id="descriptionText" class="absolute text-white text-center max-w-full w-full" style="
+        top: 45%;
+        transform: translateY(-50%);
+      ">
+      <h1 class="font-mono text-sm uppercase tracking-wide" style="
+        margin-block-start: 0.3em;
+        margin-block-end: 0.3em;
+      ">Soham Jadhav</h1>
+
+      <p class="font-exo text-4xl" style="
+            margin-block-start: 0.3em;
+            margin-block-end: 0.4em;
+      ">
+        ONE WITH AN EVERLASTING DESIRE <br>FOR THE UNKNOWN & UNTOLD
+      </p>
+
+      <a href="https://github.com/Soham-Jadhav/Portfolio-ThreeJs" class="button1 font-mono text-sm" style="
+        display: inline-block;
+        border: 1px solid white; 
+        border-radius: 0.5rem;
+        background-color: transparent;
+        background-repeat: no-repeat;
+        color: white;
+        padding-left: 15px;
+        padding-right: 15px;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        margin-top: 4%;
+        cursor: pointer;
+        text-decoration: none;
+      ">View Work</a>
+    </div>
+  </div>
   <script type="module" src="/main.js"></script>
 </body>
 

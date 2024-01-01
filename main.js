@@ -7,23 +7,23 @@ import gsap from 'gsap';
 const gui = new dat.GUI();
 const world = {
   plane: {
-    width: 20,
-    height: 20,
-    widthSegments: 18,
-    heightSegments: 18,
+    width: 400,
+    height: 400,
+    widthSegments: 50,
+    heightSegments: 50,
   },
 };
 
-gui.add(world.plane, 'width', 1, 50).onChange(() => {
+gui.add(world.plane, 'width', 1, 1000).onChange(() => {
   generatePlane();
 });
-gui.add(world.plane, 'height', 1, 50).onChange(() => {
+gui.add(world.plane, 'height', 1, 1000).onChange(() => {
   generatePlane();
 });
-gui.add(world.plane, 'widthSegments', 1, 100).onChange(() => {
+gui.add(world.plane, 'widthSegments', 1, 500).onChange(() => {
   generatePlane();
 });
-gui.add(world.plane, 'heightSegments', 1, 100).onChange(() => {
+gui.add(world.plane, 'heightSegments', 1, 500).onChange(() => {
   generatePlane();
 });
 
@@ -36,18 +36,31 @@ function generatePlane() {
     world.plane.heightSegments
   );
 
+  // Make rigid pattern on the planeMesh
   // console.log(planeMesh.geometry.attributes.position.array);
   const { array } = planeMesh.geometry.attributes.position;
-
+  let randomValues = [];
   for (let i = 0; i <= array.length; i += 3) {
     const x = array[i];
     const y = array[i + 1];
     const z = array[i + 2];
 
-    array[i] = x;
-    array[i + 1] = y;
-    array[i + 2] = z + Math.random();
+    array[i] = x + (Math.random() - 0.5) * 3;
+    array[i + 1] = y + (Math.random() - 0.5) * 3;
+    array[i + 2] = z + (Math.random() - 0.5) * 3;
+
+    randomValues.push(
+      (Math.random() - 0.5) * Math.PI * 2,
+      (Math.random() - 0.5) * Math.PI * 2,
+      (Math.random() - 0.5) * Math.PI * 2
+    );
   }
+
+  // console.log(randomValues);
+
+  // Store some random values & the position of the vertices as attributes to the planeMesh
+  planeMesh.geometry.attributes.position.originalPosition = planeMesh.geometry.attributes.position.array;
+  planeMesh.geometry.attributes.position.randomValues = randomValues;
 
   // Instanciate color for each pixel on the planeMesh
   const colors = [];
@@ -87,9 +100,9 @@ document.body.appendChild(renderer.domElement);
 // scene.add(boxMesh);
 
 const planeGeometry = new THREE.PlaneGeometry(
-  world.plane.width, 
-  world.plane.height, 
-  world.plane.widthSegments, 
+  world.plane.width,
+  world.plane.height,
+  world.plane.widthSegments,
   world.plane.heightSegments
 );
 const planeMaterial = new THREE.MeshPhongMaterial({
@@ -105,15 +118,28 @@ scene.add(planeMesh);
 // Make rigid pattern on the planeMesh
 // console.log(planeMesh.geometry.attributes.position.array);
 const { array } = planeMesh.geometry.attributes.position;
+let randomValues = [];
 for (let i = 0; i <= array.length; i += 3) {
   const x = array[i];
   const y = array[i + 1];
   const z = array[i + 2];
 
-  array[i] = x;
-  array[i + 1] = y;
-  array[i + 2] = z + Math.random();
+  array[i] = x + (Math.random() - 0.5) * 3;
+  array[i + 1] = y + (Math.random() - 0.5) * 3;
+  array[i + 2] = z + (Math.random() - 0.5) * 3;
+
+  randomValues.push(
+    (Math.random() - 0.5) * Math.PI * 2,
+    (Math.random() - 0.5) * Math.PI * 2,
+    (Math.random() - 0.5) * Math.PI * 2
+  );
 }
+
+// console.log(randomValues);
+
+// Store some random values & the position of the vertices as attributes to the planeMesh
+planeMesh.geometry.attributes.position.originalPosition = planeMesh.geometry.attributes.position.array;
+planeMesh.geometry.attributes.position.randomValues = randomValues;
 
 // Instanciate color for each pixel on the planeMesh
 const colors = [];
@@ -128,8 +154,11 @@ planeMesh.geometry.setAttribute(
   // new THREE.BufferAttribute(new Float32Array([1, 0, 0]), 3)
 )
 
+// Instantiate added arttributes to the planeMesh
+generatePlane();
+
 const light = new THREE.DirectionalLight(0xffffff, 1);
-light.position.set(0, 0, 1);
+light.position.set(0, -1, 1);
 scene.add(light);
 
 const backLight = new THREE.DirectionalLight(0xffffff, 1);
@@ -139,7 +168,7 @@ scene.add(backLight);
 // Add custom rotation abilities to scene
 new OrbitControls(camera, renderer.domElement);
 
-camera.position.z = 5;
+camera.position.z = 50;
 
 // renderer.render(scene, camera);
 
@@ -147,16 +176,27 @@ const mouse = {
   x: undefined,
   y: undefined,
 };
+let frame = 0;
 let animationId;
 
 function animate() {
   animationId = requestAnimationFrame(animate);
+  frame += 0.01;
 
   renderer.render(scene, camera);
   // boxMesh.rotation.x += 0.01;
   // boxMesh.rotation.z += 0.01;
-  planeMesh.rotation.x += 0.01;
-  planeMesh.rotation.z += 0.01;
+  // planeMesh.rotation.x += 0.01;
+  // planeMesh.rotation.z += 0.01;
+
+  // Add random motion to the vertices along all axis
+  const { array, originalPosition, randomValues } = planeMesh.geometry.attributes.position;
+  for (let i = 0; i < array.length; i += 3) {
+    array[i] = originalPosition[i] + Math.cos(frame + randomValues[i]) * 0.005;
+    array[i + 1] = originalPosition[i + 1] + Math.sin(frame + randomValues[i + 1]) * 0.005;
+    // array[i + 2] = originalPosition[i + 2] + Math.cos(frame + randomValues[i + 2]) * 0.005;
+  }
+  planeMesh.geometry.attributes.position.needsUpdate = true;
 
   // Add/Set raycaster 
   raycaster.setFromCamera(mouse, camera);
